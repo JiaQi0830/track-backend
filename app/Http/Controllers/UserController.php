@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
-class Controller extends BaseController
+class UserController extends BaseController
 {
     public function register(Request $request)
     {
