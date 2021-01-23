@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Rules\ValidStepAttach;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Rules\ValidStepSequenceAttach;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Lumen\Routing\Controller as BaseController;
 
@@ -25,9 +26,10 @@ class ProcessController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'unique:processes', 'string', 'max:125', 'bail'],
-            'steps' => ['required', 'array'],
+            'steps' => ['required', 'array', new ValidStepSequenceAttach],
             'steps.*.id' => ['required', 'integer', new ValidStepAttach, 'bail'],
-            'steps.*.expected_date' => ['nullable', 'date', 'bail']
+            'steps.*.expected_date' => ['nullable', 'date', 'bail'],
+            'steps.*.sequence' => ['required', 'integer', 'bail']
         ]);
 
         if($validator->fails()){
@@ -50,7 +52,7 @@ class ProcessController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', "unique:processes,id, {$processId}", 'string', 'max:125', 'bail'],
-            'steps' => ['required', 'array'],
+            'steps' => ['required', 'array', new ValidStepSequenceAttach],
             'steps.*.id' => ['required', 'integer', new ValidStepAttach, 'bail'],
             'steps.*.expected_date' => ['nullable', 'date', 'bail']
         ]);
