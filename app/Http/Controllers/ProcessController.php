@@ -22,6 +22,13 @@ class ProcessController extends BaseController
         return response(['data' => $step, 'message' => 'Retrieve successfully!', 'status' => true]);
     }
 
+    public function getProcess()
+    {
+        $step = Process::all();
+
+        return response(['data' => $step, 'message' => 'Retrieve successfully!', 'status' => true]);
+    }
+
     public function getProcessStep(int $processId)
     {
         $step = Process::findOrFail($processId)->steps()->orderBy('sequence')->get();
