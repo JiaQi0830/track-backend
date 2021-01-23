@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Lumen\Routing\Controller as BaseController;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class UserController extends BaseController
 {
@@ -28,7 +27,7 @@ class UserController extends BaseController
 
         $user = User::create($input);
 
-        $data['token'] =  $user->createToken('MyApp')->accessToken;
+        $data['token'] =  $user->createToken(config('app.name'))->accessToken;
         $data['username'] =  $user->name;
 
         return response(['data' => $data, 'message' => 'Account created successfully!', 'status' => true]);
@@ -48,10 +47,10 @@ class UserController extends BaseController
         $user = User::where('username', $request->username)->firstOrFail();
 
         if (!Hash::check($request->password, $user->getAuthPassword())) {
-            throw new BadRequestException('Wrong password or email');
+            return response(['message' => 'Invalid password/username', 'status' => false], 500);
         }
 
-        $data['token'] =  $user->createToken('MyApp')->accessToken;
+        $data['token'] =  $user->createToken(config('app.name'))->accessToken;
         $data['username'] =  $user->name;
 
         return response(['data' => $data, 'message' => 'Login successfully!', 'status' => true]);
