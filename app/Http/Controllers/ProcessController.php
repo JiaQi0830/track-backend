@@ -24,7 +24,7 @@ class ProcessController extends BaseController
     public function storeProcess(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:125', 'bail'],
+            'name' => ['required', 'unique:processes', 'string', 'max:125', 'bail'],
             'steps' => ['required', 'array'],
             'steps.*.id' => ['required', 'integer', new ValidStepAttach, 'bail'],
             'steps.*.expected_date' => ['nullable', 'date', 'bail']
@@ -37,12 +37,39 @@ class ProcessController extends BaseController
         $inputData = array_merge($request->all(), ['created_by'=> Auth::id()]);
         DB::transaction(function () use ($inputData) {
             $process = Process::create(Arr::except($inputData, 'steps'));
-            dd(collect($inputData['steps'])->keyBy('id')->except('id'));
-            $step = collect($inputData['steps'])->keyBy('id')->except('id');
-            dd(json_encode($step));
-            $process->steps()->sync($inputData['steps'],false);
+            $steps = collect($inputData['steps'])->keyBy('id')->map(function ($step) {
+                return Arr::except($step, 'id');
+            });
+
+            $process->steps()->sync($steps, true);
         });
         return response(['data' => [], 'message' => 'Create successfully!', 'status' => true]);
+    }
+
+    public function editProcess(Request $request, int $processId)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', "unique:processes,id, {$processId}", 'string', 'max:125', 'bail'],
+            'steps' => ['required', 'array'],
+            'steps.*.id' => ['required', 'integer', new ValidStepAttach, 'bail'],
+            'steps.*.expected_date' => ['nullable', 'date', 'bail']
+        ]);
+
+        if($validator->fails()){
+            return response(['message' => 'Validation errors', 'errors' =>  $validator->errors(), 'status' => false], 422);
+        }
+
+        $inputData = array_merge($request->all(), ['created_by'=> Auth::id()]);
+        DB::transaction(function () use ($inputData, $processId) {
+            $process = Process::findOrFail($processId);
+            $steps = collect($inputData['steps'])->keyBy('id')->map(function ($step) {
+                return Arr::except($step, 'id');
+            });
+
+            $process->steps()->sync($steps, true);
+            $process->touch();
+        });
+        return response(['data' => [], 'message' => 'Edit successfully!', 'status' => true]);
     }
 
 }
