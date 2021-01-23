@@ -37,8 +37,8 @@ class ProcessController extends BaseController
         $inputData = array_merge($request->all(), ['created_by'=> Auth::id()]);
         DB::transaction(function () use ($inputData) {
             $process = Process::create(Arr::except($inputData, 'steps'));
-            dd(json_encode($inputData));
-            $step = collect($inputData)->keyBy('id');
+            dd(collect($inputData['steps'])->keyBy('id')->except('id'));
+            $step = collect($inputData['steps'])->keyBy('id')->except('id');
             dd(json_encode($step));
             $process->steps()->sync($inputData['steps'],false);
         });

@@ -47,7 +47,7 @@ class UserController extends BaseController
         $user = User::where('username', $request->username)->firstOrFail();
 
         if (!Hash::check($request->password, $user->getAuthPassword())) {
-            return response(['message' => 'Invalid password/username', 'status' => false], 500);
+            return response(['message' => 'Invalid password/username', 'status' => false], 401);
         }
 
         $data['token'] =  $user->createToken(config('app.name'))->accessToken;
