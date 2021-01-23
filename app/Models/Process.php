@@ -18,6 +18,6 @@ class Process extends Model
 
     public function steps()
     {
-        return $this->belongsToMany(Step::class, 'process_steps');
+        return $this->belongsToMany(Step::class, 'process_steps')->withPivot('expected_date', 'completed_date');
     }
 }
