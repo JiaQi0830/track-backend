@@ -22,4 +22,6 @@ $router->post('/login', 'UserController@login');
 
 $router->group(['middleware' => 'auth'], function () use ($router) {
     $router->get('/step', 'ProcessController@getStep');
+    $router->post('/process', 'ProcessController@storeProcess');
+    // $router->post('/process', 'ProcessController@storeProcess');
 });
