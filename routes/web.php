@@ -23,6 +23,7 @@ $router->post('/login', 'UserController@login');
 $router->group(['middleware' => 'auth'], function () use ($router) {
     $router->group(['prefix' => 'steps'], function () use ($router) {
         $router->get('/', 'StepController@getStep');
+        $router->post('/', 'StepController@storeStep');
     });
 
     $router->group(['prefix' => 'process'], function () use ($router) {
