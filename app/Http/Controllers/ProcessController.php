@@ -31,7 +31,7 @@ class ProcessController extends BaseController
 
     public function getProcessStep(int $processId)
     {
-        $step = Process::findOrFail($processId)->steps()->orderBy('sequence')->get();
+        $step = Process::where('id', $processId)->with('processSteps.user')->get();
 
         return response(['data' => $step, 'message' => 'Retrieve successfully!', 'status' => true]);
     }
@@ -86,6 +86,20 @@ class ProcessController extends BaseController
             $process->touch();
         });
         return response(['data' => [], 'message' => 'Edit successfully!', 'status' => true]);
+    }
+
+    public function completeProcess(Request $request, int $processId, int $stepId)
+    {
+        $validator = Validator::make($request->all(), [
+            'completed_date' => ['required', 'date', 'bail']
+        ]);
+
+        if($validator->fails()){
+            return response(['message' => 'Validation errors', 'errors' =>  $validator->errors(), 'status' => false], 422);
+        }
+
+        Process::findOrFail($processId)->steps()->updateExistingPivot($stepId, ['completed_date' => $request->completed_date, 'completed_by' => Auth::id()]);
+        return response(['data' => [], 'message' => 'Update successfully!', 'status' => true]);
     }
 
 }

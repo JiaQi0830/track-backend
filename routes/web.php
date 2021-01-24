@@ -21,10 +21,16 @@ $router->post('/register', 'UserController@register');
 $router->post('/login', 'UserController@login');
 
 $router->group(['middleware' => 'auth'], function () use ($router) {
-    $router->get('/step', 'ProcessController@getStep');
-    $router->get('/process', 'ProcessController@getProcess');
-    $router->get('/process/{processId}/steps', 'ProcessController@getProcessStep');
-    $router->post('/process', 'ProcessController@storeProcess');
-    $router->put('/process/{processId}', 'ProcessController@editProcess');
-    // $router->post('/process', 'ProcessController@storeProcess');
+    $router->group(['prefix' => 'steps'], function () use ($router) {
+        $router->get('/', 'StepController@getStep');
+    });
+
+    $router->group(['prefix' => 'process'], function () use ($router) {
+        $router->get('/', 'ProcessController@getProcess');
+        $router->get('/{processId}/steps', 'ProcessController@getProcessStep');
+        $router->post('/', 'ProcessController@storeProcess');
+        $router->put('/{processId}', 'ProcessController@editProcess');
+        $router->put('/{processId}/{stepId}/complete', 'ProcessController@completeProcess');
+    });
+
 });
