@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Step;
+use App\Enums\StepType;
 use App\Models\Process;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Rules\ValidStepAttach;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Rules\ValidStepSequenceAttach;
@@ -41,7 +43,9 @@ class ProcessController extends BaseController
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'unique:processes', 'string', 'max:125', 'bail'],
             'steps' => ['required', 'array', new ValidStepSequenceAttach],
-            'steps.*.id' => ['required', 'integer', new ValidStepAttach, 'bail'],
+            'steps.*.id' => ['required', 'integer', 'bail'],
+            'steps.*.type' => ['required', 'integer', Rule::in(StepType::getValues()), 'bail'],
+            'steps.*.name' => ['nullable', 'string', 'bail'],
             'steps.*.expected_date' => ['nullable', 'date', 'bail'],
             'steps.*.sequence' => ['required', 'integer', 'bail']
         ]);
@@ -54,7 +58,7 @@ class ProcessController extends BaseController
         DB::transaction(function () use ($inputData) {
             $process = Process::create(Arr::except($inputData, 'steps'));
             $steps = collect($inputData['steps'])->keyBy('id')->map(function ($step) {
-                return Arr::except($step, 'id');
+                return Arr::except($step, ['id', 'name', 'type']);
             });
 
             $process->steps()->sync($steps, true);
