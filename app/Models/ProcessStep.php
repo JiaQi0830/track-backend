@@ -22,4 +22,9 @@ class ProcessStep extends Model
         return $this->belongsTo(User::class, 'completed_by');
     }
 
+    public function step(): BelongsTo
+    {
+        return $this->belongsTo(Step::class);
+    }
+
 }

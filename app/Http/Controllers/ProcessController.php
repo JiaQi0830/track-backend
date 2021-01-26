@@ -33,7 +33,7 @@ class ProcessController extends BaseController
 
     public function getProcessStep(int $processId)
     {
-        $step = Process::where('id', $processId)->with('processSteps.user')->get();
+        $step = Process::where('id', $processId)->with('processSteps.user')->with('processSteps.step')->get();
 
         return response(['data' => $step, 'message' => 'Retrieve successfully!', 'status' => true]);
     }
@@ -43,6 +43,7 @@ class ProcessController extends BaseController
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'unique:processes', 'string', 'max:125', 'bail'],
             'steps' => ['required', 'array', new ValidStepSequenceAttach],
+            'steps.*' => ['required', 'array', new ValidStepAttach, 'bail'],
             'steps.*.id' => ['required', 'integer', 'bail'],
             'steps.*.type' => ['required', 'integer', Rule::in(StepType::getValues()), 'bail'],
             'steps.*.name' => ['nullable', 'string', 'bail'],
