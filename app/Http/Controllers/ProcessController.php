@@ -26,7 +26,7 @@ class ProcessController extends BaseController
 
     public function getProcess()
     {
-        $step = Process::all();
+        $step = Process::with(['created_by:id,username'])->get();
 
         return response(['data' => $step, 'message' => 'Retrieve successfully!', 'status' => true]);
     }

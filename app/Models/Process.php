@@ -27,4 +27,8 @@ class Process extends Model
         return $this->hasMany(ProcessStep::class, 'process_id');
     }
 
+    public function created_by()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
+    }
 }
