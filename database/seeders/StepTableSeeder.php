@@ -2,15 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\Step;
+use App\Models\Process;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Schema;
-use Spatie\Permission\Models\Permission;
 
-class StepTableSeeder extends Seeder
+class ProcessTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -56,7 +53,7 @@ class StepTableSeeder extends Seeder
         DB::table('steps')->truncate();
 
         $stepData->each(function ($transactionTypeData) {
-            Step::firstOrCreate($transactionTypeData);
+            Process::firstOrCreate($transactionTypeData);
         });
     }
 }

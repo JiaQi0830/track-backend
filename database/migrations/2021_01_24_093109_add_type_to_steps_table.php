@@ -15,7 +15,7 @@ class AddTypeToStepsTable extends Migration
     public function up()
     {
         Schema::table('steps', function (Blueprint $table) {
-            $table->unsignedSmallInteger('type')->default(StepType::General);
+            $table->unsignedSmallInteger('type');
         });
     }
 

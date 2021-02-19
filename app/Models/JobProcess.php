@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ProcessStep extends Model
+class JobProcess extends Model
 {
 
     /**
@@ -22,9 +22,9 @@ class ProcessStep extends Model
         return $this->belongsTo(User::class, 'completed_by');
     }
 
-    public function step(): BelongsTo
+    public function process(): BelongsTo
     {
-        return $this->belongsTo(Step::class);
+        return $this->belongsTo(Process::class);
     }
 
 }

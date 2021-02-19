@@ -5,7 +5,7 @@ namespace App\Rules;
 use App\Models\Step;
 use Illuminate\Contracts\Validation\Rule;
 
-class ValidStepSequenceAttach implements Rule
+class ValidProcessSequenceAttach implements Rule
 {
     private $errorMessageKey = 'Step sequence duplicate';
 

@@ -21,17 +21,17 @@ $router->post('/register', 'UserController@register');
 $router->post('/login', 'UserController@login');
 
 $router->group(['middleware' => 'auth'], function () use ($router) {
-    $router->group(['prefix' => 'steps'], function () use ($router) {
-        $router->get('/', 'StepController@getStep');
-        $router->post('/', 'StepController@storeStep');
+    $router->group(['prefix' => 'processes'], function () use ($router) {
+        $router->get('/', 'ProcessController@getProcess');
+        $router->post('/', 'ProcessController@storeProcess');
     });
 
-    $router->group(['prefix' => 'process'], function () use ($router) {
-        $router->get('/', 'ProcessController@getProcess');
-        $router->get('/{processId}/steps', 'ProcessController@getProcessStep');
-        $router->post('/', 'ProcessController@storeProcess');
-        $router->put('/{processId}', 'ProcessController@editProcess');
-        $router->put('/{processId}/{stepId}/complete', 'ProcessController@completeProcess');
+    $router->group(['prefix' => 'jobs'], function () use ($router) {
+        $router->get('/', 'JobController@getProcess');
+        $router->get('/{jobId}/processes', 'JobController@getJobProcess');
+        $router->post('/', 'JobController@storeJob');
+        $router->put('/{jobId}', 'JobController@editJob');
+        $router->put('/{jobId}/{processId}/complete', 'JobController@completeProcess');
     });
 
 });
