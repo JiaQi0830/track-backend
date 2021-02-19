@@ -16,7 +16,7 @@ class ProcessTableSeeder extends Seeder
      */
     public function run()
     {
-        $stepData = collect([
+        $processesData = collect([
             [
                 'name' => 'Order Of Material',
             ],
@@ -50,10 +50,10 @@ class ProcessTableSeeder extends Seeder
         ]);
 
         Schema::disableForeignKeyConstraints();
-        DB::table('steps')->truncate();
+        DB::table('processes')->truncate();
 
-        $stepData->each(function ($transactionTypeData) {
-            Process::firstOrCreate($transactionTypeData);
+        $processesData->each(function ($processData) {
+            Process::firstOrCreate($processData);
         });
     }
 }

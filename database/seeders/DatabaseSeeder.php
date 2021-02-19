@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Database\Seeders\StepTableSeeder;
+use Database\Seeders\ProcessTableSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,6 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(StepTableSeeder::class);
+        $this->call(ProcessTableSeeder::class);
     }
 }
