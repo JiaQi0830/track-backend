@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Job;
 use App\Models\Process;
 use App\Enums\ProcessType;
+use App\Rules\Base64Image;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -17,13 +18,6 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 
 class JobController extends BaseController
 {
-    public function getProcess()
-    {
-        $step = Process::all();
-
-        return response(['data' => $step, 'message' => 'Retrieve successfully!', 'status' => true]);
-    }
-
     public function getJob()
     {
         $step = Job::with(['created_by:id,username'])->get();
@@ -33,7 +27,8 @@ class JobController extends BaseController
 
     public function getJobProcess(int $jobId)
     {
-        $step = Job::where('id', $jobId)->with('jobProcesses.user')->with('jobProcesses.process')->get();
+        $step = Job::where('id', $jobId)->with(['created_by:id,username'])
+            ->with('jobProcesses.user:id,username')->with('jobProcesses.process')->get();
 
         return response(['data' => $step, 'message' => 'Retrieve successfully!', 'status' => true]);
     }
@@ -108,4 +103,31 @@ class JobController extends BaseController
         return response(['data' => [], 'message' => 'Update successfully!', 'status' => true]);
     }
 
+    public function remarkProcess(Request $request, int $jobId, int $processId)
+    {
+        $validator = Validator::make($request->all(), [
+            'remark' => ['required', 'string', 'bail']
+        ]);
+
+        if($validator->fails()){
+            return response(['message' => 'Validation errors', 'errors' =>  $validator->errors(), 'status' => false], 422);
+        }
+
+        Job::findOrFail($jobId)->processes()->updateExistingPivot($processId, ['remark' => $request->remark]);
+        return response(['data' => [], 'message' => 'Update successfully!', 'status' => true]);
+    }
+
+    public function imageProcess(Request $request, int $jobId, int $processId)
+    {
+        $validator = Validator::make($request->all(), [
+            'image' => ['required', 'string', 'bail', new Base64Image(['jpg', 'jpeg', 'png'])],
+        ]);
+
+        if($validator->fails()){
+            return response(['message' => 'Validation errors', 'errors' =>  $validator->errors(), 'status' => false], 422);
+        }
+
+        Job::findOrFail($jobId)->processes()->updateExistingPivot($processId, ['remark' => $request->remark]);
+        return response(['data' => [], 'message' => 'Update successfully!', 'status' => true]);
+    }
 }
