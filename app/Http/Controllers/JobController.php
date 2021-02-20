@@ -10,7 +10,6 @@ use Illuminate\Validation\Rule;
 use App\Rules\ValidProcessAttach;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use App\Rules\ValidProcessSequenceAttach;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Lumen\Routing\Controller as BaseController;

@@ -31,9 +31,12 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->get('/{jobId}/processes', 'JobController@getJobProcess');
         $router->post('/', 'JobController@storeJob');
         $router->put('/{jobId}', 'JobController@editJob');
-        $router->put('/{jobId}/{processId}/complete', 'JobController@completeProcess');
-        $router->put('/{jobId}/{processId}/remark', 'JobController@remarkProcess');
-        $router->put('/{jobId}/{processId}/file', 'JobController@fileProcess');
+    });
+
+    $router->group(['prefix' => 'jobs/{jobId}'], function () use ($router) {
+        $router->put('/{processId}/complete', 'JobProcessController@completeProcess');
+        $router->put('/{processId}/remark', 'JobProcessController@remarkProcess');
+        $router->put('/{processId}/file', 'JobProcessController@fileProcess');
     });
 
 });
