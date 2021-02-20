@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Job;
-use App\Models\Process;
 use App\Enums\ProcessType;
-use App\Rules\Base64Image;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Rules\ValidProcessAttach;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Rules\ValidProcessSequenceAttach;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Lumen\Routing\Controller as BaseController;
@@ -117,17 +116,22 @@ class JobController extends BaseController
         return response(['data' => [], 'message' => 'Update successfully!', 'status' => true]);
     }
 
-    public function imageProcess(Request $request, int $jobId, int $processId)
+    public function fileProcess(Request $request, int $jobId, int $processId)
     {
         $validator = Validator::make($request->all(), [
-            'image' => ['required', 'string', 'bail', new Base64Image(['jpg', 'jpeg', 'png'])],
+            'doc' => ['required','bail', 'mimes:jpeg,bmp,png,gif,svg,pdf'],
         ]);
 
         if($validator->fails()){
             return response(['message' => 'Validation errors', 'errors' =>  $validator->errors(), 'status' => false], 422);
         }
 
-        Job::findOrFail($jobId)->processes()->updateExistingPivot($processId, ['remark' => $request->remark]);
-        return response(['data' => [], 'message' => 'Update successfully!', 'status' => true]);
+        try{
+            $request->file('doc')->move(base_path()."/public/files/{$jobId}/{$processId}", 'digimon');
+        } catch (\Exception $ex) {
+            return response(['data' => [], 'message' => $ex->getMessage(), 'status' => false]);
+        }
+
+        return response(['data' => [], 'message' => 'Upload successfully!', 'status' => true]);
     }
 }

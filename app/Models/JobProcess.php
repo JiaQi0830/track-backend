@@ -14,7 +14,7 @@ class JobProcess extends Model
      * @var array
      */
     protected $fillable = [
-        'completed_by', 'completed_at'
+        'completed_by', 'completed_at', 'remark'
     ];
 
     public function user(): BelongsTo

@@ -33,6 +33,7 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->put('/{jobId}', 'JobController@editJob');
         $router->put('/{jobId}/{processId}/complete', 'JobController@completeProcess');
         $router->put('/{jobId}/{processId}/remark', 'JobController@remarkProcess');
+        $router->put('/{jobId}/{processId}/file', 'JobController@fileProcess');
     });
 
 });
